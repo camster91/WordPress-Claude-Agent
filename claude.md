@@ -22,7 +22,7 @@ wp-ai-agent/
 ├── readme.txt                   # WordPress.org readme
 ├── includes/                    # Core PHP classes
 │   ├── class-plugin.php         # Main plugin class
-│   ├── class-api-client.php     # Claude API communication
+│   ├── class-api-client.php     # OpenClaw API communication
 │   ├── class-context-collector.php
 │   ├── class-prompt-assembler.php
 │   ├── class-conversation-manager.php
@@ -54,8 +54,8 @@ wp-ai-agent/
 
 ### Phase 1: Foundation (Current Priority)
 - [ ] Plugin scaffold with main file, autoloading, activation hooks
-- [ ] Settings page for API key storage
-- [ ] Claude API client with error handling
+- [ ] Settings page for OpenClaw API key & instance URL storage
+- [ ] OpenClaw API client with error handling (OpenAI-compatible /v1 endpoint)
 - [ ] Basic chat interface in admin
 - [ ] Conversation storage (database tables)
 - [ ] Core WordPress tools (get_posts, create_page, get/update_option)
@@ -104,8 +104,10 @@ wp-ai-agent/
 ## Key Technical Decisions
 
 ### API Communication
-- Use Anthropic's Claude API (Messages API)
-- Support for tool use (function calling)
+- Use OpenClaw API (OpenAI-compatible /v1 endpoint)
+- Supports local OpenClaw instances (e.g. http://localhost:3000) or remote deployments
+- Model-agnostic: works with any LLM backend configured in OpenClaw (Claude, GPT-4, Llama, Ollama, etc.)
+- Support for tool use (function calling) via OpenAI-compatible tool_calls format
 - Implement retry logic with exponential backoff
 - Cache responses where appropriate
 
@@ -133,9 +135,10 @@ Three permission levels:
 
 1. `wp-ai-agent.php` - Plugin header and bootstrap
 2. `includes/class-plugin.php` - Main plugin class
-3. `includes/class-api-client.php` - Claude API wrapper
+3. `includes/class-api-client.php` - OpenClaw API wrapper (OpenAI-compatible /v1 client)
 4. `admin/class-admin.php` - Admin page registration
 5. `admin/views/chat-interface.php` - Chat UI
+6. `admin/views/settings-page.php` - OpenClaw instance URL + API key configuration
 
 ## Testing Approach
 
@@ -146,7 +149,7 @@ Three permission levels:
 
 ## Common Pitfalls to Avoid
 
-1. **Don't store API keys in plain text** - Use WordPress options with encryption
+1. **Don't store API keys in plain text** - Use WordPress options with encryption (OpenClaw API key + instance URL)
 2. **Don't trust LLM output blindly** - Validate all tool call parameters
 3. **Don't skip restore points** - Always backup before modifications
 4. **Don't modify Elementor post_content** - Use `_elementor_data` meta
@@ -155,7 +158,8 @@ Three permission levels:
 ## Resources
 
 - [WordPress Plugin Handbook](https://developer.wordpress.org/plugins/)
-- [Anthropic Claude API Docs](https://docs.anthropic.com/)
+- [OpenClaw Documentation](https://docs.openclaw.ai/)
+- [OpenClaw GitHub](https://github.com/openclaw/openclaw)
 - [Elementor Developer Docs](https://developers.elementor.com/)
 - [WordPress REST API Handbook](https://developer.wordpress.org/rest-api/)
 
