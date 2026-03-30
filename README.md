@@ -103,7 +103,8 @@ A WordPress plugin that provides an AI-powered assistant capable of understandin
 │                            │                                    │
 │                            ▼                                    │
 │  ┌────────────────────────────────────────────────────────────┐ │
-│  │                    Claude API Client                       │ │
+│  │                  OpenClaw API Client                       │ │
+│  │    (OpenAI-compatible /v1 endpoint, local or remote)       │ │
 │  │         (with tool definitions for WP operations)          │ │
 │  └─────────────────────────┬──────────────────────────────────┘ │
 │                            │                                    │
@@ -132,7 +133,7 @@ wp-ai-agent/
 │
 ├── includes/
 │   ├── class-plugin.php               # Main plugin class, hooks
-│   ├── class-api-client.php           # Claude API communication
+│   ├── class-api-client.php           # OpenClaw API communication (OpenAI-compatible)
 │   ├── class-context-collector.php    # Gathers site information
 │   ├── class-prompt-assembler.php     # Builds prompts with context
 │   ├── class-conversation-manager.php # Manages chat history
@@ -557,7 +558,7 @@ Return:
 
 ## 5. Tool Definitions
 
-### 5.1 Tool Definition Format (for Claude API)
+### 5.1 Tool Definition Format (for OpenClaw API — OpenAI-compatible)
 
 ```php
 // tools/definitions.php
@@ -1151,16 +1152,19 @@ Before executing any tool call, verify:
 │ WP AI Agent — Settings                                                      │
 ├─────────────────────────────────────────────────────────────────────────────┤
 │                                                                             │
-│ API Configuration                                                           │
+│ OpenClaw API Configuration                                                  │
 │ ─────────────────────────────────────────────────────────────────────────── │
 │                                                                             │
-│ Anthropic API Key:  [sk-ant-••••••••••••••••••••••••] [Test Connection]    │
+│ OpenClaw Instance URL: [http://localhost:3000    ] (your local/remote URL)  │
 │                                                                             │
-│ Model:              ○ Claude 3.5 Sonnet (Recommended)                       │
-│                     ○ Claude 3 Opus (More capable, higher cost)             │
-│                     ○ Claude 3 Haiku (Faster, lower cost)                   │
+│ OpenClaw API Key:  [oc-••••••••••••••••••••••••••] [Test Connection]       │
+│                                                                             │
+│ Model:              [_________________________▼] (auto-detected from       │
+│                     your OpenClaw instance, e.g. claude-3.5-sonnet,        │
+│                     gpt-4, llama-3, or any model your instance supports)   │
 │                                                                             │
 │ Monthly Budget:     [$50.00        ] □ Pause agent when limit reached       │
+│                     (applies to paid upstream providers; $0 for local)      │
 │                                                                             │
 │ ─────────────────────────────────────────────────────────────────────────── │
 │ Page Builder Configuration                                                  │
@@ -1213,15 +1217,15 @@ Before executing any tool call, verify:
 | Task | Description | Est. Hours |
 |------|-------------|------------|
 | Plugin scaffold | Main plugin file, autoloading, activation hooks | 4 |
-| Settings page | API key storage, basic settings UI | 6 |
-| Claude API client | API communication class with error handling | 8 |
+| Settings page | OpenClaw API key & instance URL storage, basic settings UI | 6 |
+| OpenClaw API client | OpenAI-compatible API communication class with error handling | 8 |
 | Chat interface (basic) | Simple admin page with message input/display | 8 |
 | Conversation storage | Database tables, CRUD operations | 6 |
 | Core WP tools | get_posts, create_page, get/update_option | 10 |
 | Basic prompt assembly | System prompt + site context + user message | 6 |
 | **Phase 1 Total** | | **48 hours** |
 
-**Deliverable:** Plugin that can chat and perform basic WordPress operations (create pages, read posts)
+**Deliverable:** Plugin that can chat via OpenClaw and perform basic WordPress operations (create pages, read posts)
 
 ---
 
@@ -1316,12 +1320,12 @@ Before executing any tool call, verify:
 
 | Risk | Likelihood | Impact | Mitigation |
 |------|------------|--------|------------|
-| API costs exceed budget | Medium | Medium | Usage tracking, budget limits, caching |
+| API costs exceed budget | Medium | Medium | Usage tracking, budget limits, caching (or use local models via OpenClaw for zero-cost inference) |
 | Security vulnerability | Low | High | Sandboxing, permission system, audit logging |
 | Elementor API changes | Medium | Medium | Version detection, schema versioning |
 | User makes destructive request | Medium | High | Confirmation flow, restore points |
 | Performance issues (large sites) | Medium | Medium | Pagination, selective context loading |
-| Claude hallucinates incorrect actions | Medium | Medium | Schema validation, preflight checks |
+| LLM hallucinates incorrect actions | Medium | Medium | Schema validation, preflight checks |
 
 ---
 
